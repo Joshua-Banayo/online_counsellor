@@ -3,13 +3,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:online_counsellor/presentation/home/home_main.dart';
+import 'package:online_counsellor/presentation/pages/home/home_main.dart';
 import 'package:online_counsellor/presentation/pages/authentication/auth_main_page.dart';
 import 'package:online_counsellor/services/firebase_auth.dart';
 import 'package:online_counsellor/services/firebase_fireStore.dart';
+import 'package:online_counsellor/services/other_services.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/colors.dart';
 import 'core/components/widgets/smart_dialog.dart';
+import 'core/functions.dart';
 import 'firebase_options.dart';
 import 'models/user_model.dart';
 
@@ -30,11 +32,19 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   Future<bool> _initUser() async {
-    await FirebaseAuthService.signOut();
+    ref.watch(quotesProvider.notifier).getQuotes();
+    ref.watch(counsellorsProvider.notifier).getCounsellors();
+    // //get all uses from firestore and add update their rating with random number
+    // List<Map<String, dynamic>> users = await FireStoreServices.getAllUsersMap();
+    // for (Map<String, dynamic> user in users) {
+    //   await FireStoreServices.updateUserRating(user['id'], getRandomRating());
+    // }
+    //await FirebaseAuthService.signOut();
     if (FirebaseAuthService.isUserLogin()) {
       User user = FirebaseAuthService.getCurrentUser();
-      String? userType = user.phoneNumber;
 
+      //set user isOnline to true in firestore
+      await FireStoreServices.updateUserOnlineStatus(user.uid, true);
       UserModel? userModel = await FireStoreServices.getUser(user.uid);
       if (userModel != null) {
         ref.read(userProvider.notifier).setUser(userModel);
@@ -49,6 +59,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       return false;
     }
   }
+  // set user isOnline to false in firestore when app is closed
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +84,10 @@ class _MyAppState extends ConsumerState<MyApp> {
                 return const Scaffold(
                   backgroundColor: Colors.white,
                   body: Center(
-                    child: CircularProgressIndicator(),
+                    child: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: CircularProgressIndicator()),
                   ),
                 );
               }

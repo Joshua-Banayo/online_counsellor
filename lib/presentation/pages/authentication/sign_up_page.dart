@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
 import 'package:online_counsellor/state/navigation_state.dart';
 import '../../../core/components/constants/strings.dart';
 import '../../../core/components/widgets/custom_button.dart';
@@ -60,7 +61,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _dobController = TextEditingController();
-
+  final _aboutController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -71,6 +72,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
       _emailController.text = user.email ?? '';
       _passwordController.text = user.password ?? '';
       _dobController.text = user.dob ?? '';
+      _aboutController.text = user.about ?? '';
     });
   }
 
@@ -108,24 +110,25 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                 const SizedBox(
                   height: 20,
                 ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('Who are you ?',
-                      style: normalText(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold)),
-                  subtitle: CustomDropDown(
-                      onChanged: (value) {
-                        ref.read(userProvider.notifier).setUserType(value!);
-                        ref.read(userTypeProvider.notifier).state =
-                            value.toString();
-                      },
-                      items: ['Counsellor', 'Client']
-                          .map((value) => DropdownMenuItem(
-                              value: value, child: Text(value)))
-                          .toList()),
-                ),
+                CustomDropDown(
+                    hintText: 'Select user type',
+                    icon: MdiIcons.accountAlert,
+                    value: ref.watch(userProvider).userType,
+                    validator: (value) {
+                      if (value == null) {
+                        return 'User Type is required';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      ref.read(userProvider.notifier).setUserType(value!);
+                      ref.read(userTypeProvider.notifier).state =
+                          value.toString();
+                    },
+                    items: ['Counsellor', 'Client']
+                        .map((value) =>
+                            DropdownMenuItem(value: value, child: Text(value)))
+                        .toList()),
                 const SizedBox(
                   height: 20,
                 ),
@@ -219,66 +222,23 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                       return null;
                     },
                   ),
-                const SizedBox(
-                  height: 20,
-                ),
-                CustomDropDown(
-                  value: ref.watch(userProvider).educationLevel,
-                  onChanged: (value) {
-                    ref.read(userProvider.notifier).setEducationLevel(value!);
-                  },
-                  icon: MdiIcons.school,
-                  validator: (level) {
-                    if (level == null) {
-                      return 'Educational Level is required';
-                    }
-                    return null;
-                  },
-                  items: [
-                    'Primary',
-                    'Secondary',
-                    'Tertiary',
-                    'Post Graduate',
-                    'Doctorate'
-                  ]
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(e),
-                          ))
-                      .toList(),
-                  hintText: 'Educational Level',
-                ),
                 if (ref.watch(userTypeProvider) != 'Counsellor')
                   const SizedBox(
                     height: 20,
                   ),
+                CustomTextFields(
+                  hintText: 'About you',
+                  controller: _aboutController,
+                  prefixIcon: MdiIcons.account,
+                  maxLines: 2,
+                  keyboardType: TextInputType.text,
+                  onSaved: (value) {
+                    ref.read(userProvider.notifier).setAbout(value!);
+                  },
+                ),
                 if (ref.watch(userTypeProvider) != 'Counsellor')
-                  CustomDropDown(
-                    value: ref.watch(userProvider).maritalStatus,
-                    items: [
-                      'Single',
-                      'Married',
-                      'Divorced',
-                      'Widowed',
-                      'Separated'
-                    ]
-                        .map((e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(e),
-                            ))
-                        .toList(),
-                    hintText: 'Marital Status',
-                    icon: MdiIcons.heart,
-                    validator: (p0) {
-                      if (ref.watch(userTypeProvider) != 'Counsellor' &&
-                          p0 == null) {
-                        return 'Marital Status is required';
-                      }
-                      return null;
-                    },
-                    onChanged: (status) {
-                      ref.read(userProvider.notifier).setMaritalStatus(status!);
-                    },
+                  const SizedBox(
+                    height: 20,
                   ),
                 CustomTextFields(
                   hintText: 'Password',
@@ -455,6 +415,12 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
                       onChanged: (region) {
                         ref.read(userProvider.notifier).setUserRegion(region!);
                       },
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a region';
+                        }
+                        return null;
+                      },
                       icon: MdiIcons.earth,
                       items: regionList
                           .map((e) => DropdownMenuItem(
@@ -532,15 +498,13 @@ class OtherInfo extends ConsumerStatefulWidget {
 
 class _OtherInfoState extends ConsumerState<OtherInfo> {
   final _formKey = GlobalKey<FormState>();
-  final _aboutController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      var user = ref.read(userProvider);
-      _aboutController.text = user.about ?? '';
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   var user = ref.read(userProvider);
+    // });
   }
 
   @override
@@ -594,7 +558,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                                     )
                                   : null,
                             ),
-                            child: const Text('Select Image'),
+                            child: const Text('Profile Image'),
                           ),
                         ),
                         const SizedBox(
@@ -629,32 +593,130 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                       height: 20,
                     ),
                     if (ref.watch(userTypeProvider) != 'Counsellor')
-                      CustomTextFields(
-                        hintText: 'About you',
-                        controller: _aboutController,
-                        prefixIcon: MdiIcons.account,
-                        maxLines: 3,
-                        keyboardType: TextInputType.text,
-                        onSaved: (value) {
-                          ref.read(userProvider.notifier).setAbout(value!);
+                      CustomDropDown(
+                        value: ref.watch(userProvider).educationLevel,
+                        onChanged: (value) {
+                          ref
+                              .read(userProvider.notifier)
+                              .setEducationLevel(value!);
                         },
-                        validator: (value) {
+                        icon: MdiIcons.school,
+                        validator: (level) {
                           if (ref.watch(userTypeProvider) != 'Counsellor' &&
-                              value!.isEmpty) {
-                            return 'Please enter a short description about yourself';
+                              level == null) {
+                            return 'Educational Level is required';
                           }
                           return null;
+                        },
+                        items: [
+                          'Primary',
+                          'Secondary',
+                          'Tertiary',
+                          'Post Graduate',
+                          'Doctorate'
+                        ]
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
+                        hintText: 'Educational Level',
+                      ),
+                    if (ref.watch(userTypeProvider) != 'Counsellor')
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    if (ref.watch(userTypeProvider) != 'Counsellor')
+                      CustomDropDown(
+                        value: ref.watch(userProvider).maritalStatus,
+                        items: [
+                          'Single',
+                          'Married',
+                          'Divorced',
+                          'Widowed',
+                          'Separated'
+                        ]
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
+                        hintText: 'Marital Status',
+                        icon: MdiIcons.heart,
+                        validator: (p0) {
+                          if (ref.watch(userTypeProvider) != 'Counsellor' &&
+                              p0 == null) {
+                            return 'Marital Status is required';
+                          }
+                          return null;
+                        },
+                        onChanged: (status) {
+                          ref
+                              .read(userProvider.notifier)
+                              .setMaritalStatus(status!);
                         },
                       ),
                     const SizedBox(
                       height: 20,
                     ),
+                    CustomDropDown(
+                      value: ref.watch(userProvider).religion,
+                      validator: (religion) {
+                        if (religion == null) {
+                          return 'Please select a religion';
+                        }
+                        return null;
+                      },
+                      onChanged: (religion) {
+                        ref.read(userProvider.notifier).setReligion(religion!);
+                      },
+                      icon: MdiIcons.church,
+                      items: ['Christianity', 'Islam', 'Traditional', 'Others']
+                          .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)))
+                          .toList(),
+                      hintText: 'Select Religion',
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    if (ref.watch(userTypeProvider) != 'Counsellor')
+                      CustomDropDown(
+                        value: ref.watch(userProvider).employmentStatus,
+                        validator: (status) {
+                          if (ref.watch(userTypeProvider) != 'Counsellor' &&
+                              status!.isEmpty) {
+                            return 'Please select an employment status';
+                          }
+                          return null;
+                        },
+                        icon: MdiIcons.briefcase,
+                        onChanged: (status) {
+                          ref
+                              .read(userProvider.notifier)
+                              .setEmploymentStatus(status!);
+                        },
+                        items: [
+                          'Employed',
+                          'Unemployed',
+                          'Self Employed',
+                          'Student',
+                          'Retired',
+                          'Others'
+                        ]
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
+                        hintText: 'Employment status',
+                      ),
                     if (ref.watch(userTypeProvider) == 'Counsellor')
                       CustomDropDown(
                           value: ref.read(userProvider).counsellorType,
                           validator: (type) {
                             if (ref.watch(userTypeProvider) == 'Counsellor' &&
-                                type!.isEmpty) {
+                                type == null) {
                               return 'Please select a type';
                             }
                             return null;
@@ -673,6 +735,32 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                                   )))
                               .toList(),
                           hintText: 'Which one are you'),
+                    if (ref.watch(userTypeProvider) == 'Counsellor')
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    if (ref.watch(userTypeProvider) == 'Counsellor')
+                      // pick image for license certificate
+                      GestureDetector(
+                        onTap: () => _pickCertificateImage(),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(10),
+                              image: ref.watch(certificateProvider) != null
+                                  ? DecorationImage(
+                                      image: FileImage(
+                                          ref.watch(certificateProvider)!),
+                                      fit: BoxFit.cover)
+                                  : null),
+                          height: 150,
+                          alignment: Alignment.bottomCenter,
+                          padding: const EdgeInsets.all(10),
+                          child:
+                              const Text('Select Image of License Certificate'),
+                        ),
+                      ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -681,6 +769,13 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
+                          if (ref.watch(userTypeProvider) == 'Counsellor' &&
+                              ref.watch(certificateProvider) == null) {
+                            return CustomDialog.showError(
+                                title: 'Incomplete Data',
+                                message:
+                                    'Please select an image of your license certificate');
+                          }
                           ref.read(userProvider.notifier).createUser(ref);
                         }
                       },
@@ -747,6 +842,53 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                 );
                 if (pickedFile != null) {
                   ref.read(userImageProvider.notifier).state =
+                      File(pickedFile.path);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _pickCertificateImage() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SizedBox(
+        height: 150,
+        child: Column(
+          children: [
+            Text(
+              'Select Image of License Certificate',
+              style: normalText(fontWeight: FontWeight.bold),
+            ),
+            ListTile(
+              leading: Icon(MdiIcons.camera),
+              title: const Text('Camera'),
+              onTap: () async {
+                Navigator.pop(context);
+                final pickedFile = await ImagePicker().pickImage(
+                  source: ImageSource.camera,
+                  imageQuality: 50,
+                );
+                if (pickedFile != null) {
+                  ref.read(certificateProvider.notifier).state =
+                      File(pickedFile.path);
+                }
+              },
+            ),
+            ListTile(
+              leading: Icon(MdiIcons.image),
+              title: const Text('Gallery'),
+              onTap: () async {
+                Navigator.pop(context);
+                final pickedFile = await ImagePicker().pickImage(
+                  source: ImageSource.gallery,
+                  imageQuality: 50,
+                );
+                if (pickedFile != null) {
+                  ref.read(certificateProvider.notifier).state =
                       File(pickedFile.path);
                 }
               },

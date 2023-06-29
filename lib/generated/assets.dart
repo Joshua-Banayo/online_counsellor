@@ -2,6 +2,17 @@
 class Assets {
   Assets._();
 
+  static const String imagesAddiction = 'assets/images/addiction.png';
+  static const String imagesCareer = 'assets/images/career.png';
+  static const String imagesChild = 'assets/images/child.png';
+  static const String imagesFamily = 'assets/images/family.png';
+  static const String imagesGrief = 'assets/images/grief.png';
+  static const String imagesGuidance = 'assets/images/guidance.png';
+  static const String imagesMarriage = 'assets/images/marriage.png';
+  static const String imagesMentalHealth = 'assets/images/mental_health.png';
+  static const String imagesPsychologist = 'assets/images/psychologist.png';
+  static const String imagesRehabilitation = 'assets/images/rehabilitation.png';
+  static const String imagesStudent = 'assets/images/student.png';
   static const String logoIcon = 'assets/logo/icon.png';
   static const String logoLogo = 'assets/logo/logo.png';
   static const String logoLogoAndroid12 = 'assets/logo/logo_android_12.png';

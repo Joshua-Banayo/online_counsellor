@@ -22,4 +22,13 @@ class CloudStorageServices {
     final String url = await taskSnapshot.ref.getDownloadURL();
     return url;
   }
+
+  static Future<String> saveCertificate(File certificate, String id) async {
+    final Reference storageReference =
+        _firebaseStorage.ref().child('certificates/$id');
+    final UploadTask uploadTask = storageReference.putFile(certificate);
+    final TaskSnapshot taskSnapshot = await uploadTask;
+    final String url = await taskSnapshot.ref.getDownloadURL();
+    return url;
+  }
 }

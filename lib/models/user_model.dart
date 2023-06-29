@@ -1,6 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'dart:convert';
+import 'dart:math';
+
+import 'package:online_counsellor/core/components/constants/strings.dart';
 
 class UserModel {
   String? id;
@@ -22,6 +25,8 @@ class UserModel {
   String? counsellorType;
   String? religion;
   String? dob;
+  String? licenseCert;
+  double? rating;
   int? createdAt;
   UserModel({
     this.id,
@@ -43,6 +48,8 @@ class UserModel {
     this.counsellorType,
     this.religion,
     this.dob,
+    this.licenseCert,
+    this.rating,
     this.createdAt,
   });
 
@@ -66,6 +73,8 @@ class UserModel {
     String? counsellorType,
     String? religion,
     String? dob,
+    String? licenseCert,
+    double? rating,
     int? createdAt,
   }) {
     return UserModel(
@@ -88,6 +97,8 @@ class UserModel {
       counsellorType: counsellorType ?? this.counsellorType,
       religion: religion ?? this.religion,
       dob: dob ?? this.dob,
+      licenseCert: licenseCert ?? this.licenseCert,
+      rating: rating ?? this.rating,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -113,6 +124,8 @@ class UserModel {
       'counsellorType': counsellorType,
       'religion': religion,
       'dob': dob,
+      'licenseCert': licenseCert,
+      'rating': rating,
       'createdAt': createdAt,
     };
   }
@@ -145,6 +158,9 @@ class UserModel {
           : null,
       religion: map['religion'] != null ? map['religion'] as String : null,
       dob: map['dob'] != null ? map['dob'] as String : null,
+      licenseCert:
+          map['licenseCert'] != null ? map['licenseCert'] as String : null,
+      rating: map['rating'] != null ? map['rating'] as double : null,
       createdAt: map['createdAt'] != null ? map['createdAt'] as int : null,
     );
   }
@@ -156,7 +172,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, email: $email, password: $password, name: $name, profile: $profile, phone: $phone, address: $address, city: $city, region: $region, isOnline: $isOnline, about: $about, gender: $gender, userType: $userType, maritalStatus: $maritalStatus, employmentStatus: $employmentStatus, educationLevel: $educationLevel, counsellorType: $counsellorType, religion: $religion, dob: $dob, createdAt: $createdAt)';
+    return 'UserModel(id: $id, email: $email, password: $password, name: $name, profile: $profile, phone: $phone, address: $address, city: $city, region: $region, isOnline: $isOnline, about: $about, gender: $gender, userType: $userType, maritalStatus: $maritalStatus, employmentStatus: $employmentStatus, educationLevel: $educationLevel, counsellorType: $counsellorType, religion: $religion, dob: $dob, licenseCert: $licenseCert, rating: $rating, createdAt: $createdAt)';
   }
 
   @override
@@ -182,6 +198,8 @@ class UserModel {
         other.counsellorType == counsellorType &&
         other.religion == religion &&
         other.dob == dob &&
+        other.licenseCert == licenseCert &&
+        other.rating == rating &&
         other.createdAt == createdAt;
   }
 
@@ -206,6 +224,253 @@ class UserModel {
         counsellorType.hashCode ^
         religion.hashCode ^
         dob.hashCode ^
+        licenseCert.hashCode ^
+        rating.hashCode ^
         createdAt.hashCode;
+  }
+}
+
+class DummyCounsellors {
+  static final Random _random = Random();
+  static List<String> counselorNames = [
+    'Dr. Kofi Mensah',
+    'Mrs. Akosua Mensah',
+    'Mr. Kwame Owusu',
+    'Miss Ama Mensah',
+    'Dr. Nana Osei',
+    'Mrs. Abena Appiah',
+    'Mr. Kwesi Agyemang',
+    'Miss Adwoa Boateng',
+    'Dr. Kofi Ansah',
+    'Mrs. Afua Mensah',
+    'Mr. Kojo Boateng',
+    'Miss Yaa Adjei',
+    'Dr. Kwabena Darko',
+    'Mrs. Akua Asante',
+    'Mr. Kweku Addo',
+    'Miss Efua Amoah',
+    'Dr. Kwame Mensah',
+    'Mrs. Abena Ofori',
+    'Mr. Kofi Adu',
+    'Miss Akosua Frimpong',
+    'Dr. Nana Kwame',
+    'Mrs. Adwoa Boateng',
+    'Mr. Kwabena Osei',
+    'Miss Ama Asare',
+    'Dr. Kofi Antwi',
+    'Mrs. Afia Owusu',
+    'Mr. Kojo Gyasi',
+    'Miss Yaa Ansah',
+    'Dr. Kwesi Amponsah',
+    'Mrs. Akosua Asamoah'
+  ];
+  static List<String> counselorImages = [
+    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1530785602389-07594beb8b73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1616805765352-beedbad46b2a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1563132337-f159f484226c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1617244147030-8bd6f9e21d1e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1606416041875-c020fd6cd16c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=391&q=80",
+    "https://images.unsplash.com/photo-1578758803946-2c4f6738df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1573166953836-06864dc70a21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=388&q=80",
+    "https://images.unsplash.com/photo-1514222709107-a180c68d72b4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=449&q=80",
+    "https://images.unsplash.com/photo-1571442463800-1337d7af9d2f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1173&q=80",
+    "https://images.unsplash.com/photo-1617244146826-ce9182d9388b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1614533836100-dd83a8c04e29?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1610473068514-276d33c606dd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1614533836096-fc5a112c07a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1627595359082-cc2b3487a40b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=464&q=80",
+    "https://images.unsplash.com/photo-1508243771214-6e95d137426b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1571442463716-e3e186378445?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1173&q=80",
+    "https://images.unsplash.com/photo-1621701582507-4e580f0c84f9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=464&q=80",
+    "https://images.unsplash.com/photo-1535469618671-e58a8c365cbd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1524538198441-241ff79d153b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1489667897015-bf7a9e45c284?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=587&q=80",
+    "https://images.unsplash.com/photo-1578758837674-93ed0ab5fbab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1575880918403-f578c9078302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=580&q=80",
+    "https://images.unsplash.com/photo-1621331938577-42f137e5d5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1655720357872-ce227e4164ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1589114207353-1fc98a11070b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1331&q=80",
+    "https://images.unsplash.com/photo-1521510186458-bbbda7aef46b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=581&q=80",
+    "https://images.unsplash.com/photo-1581368135153-a506cf13b1e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    "https://images.unsplash.com/photo-1573496358961-3c82861ab8f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=388&q=80",
+    "https://images.unsplash.com/photo-1517598024396-46c53fb391a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=435&q=80",
+    "https://images.unsplash.com/photo-1618333453525-81f8582b1a3d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=387&q=80",
+    "https://images.unsplash.com/photo-1529688530647-93a6e1916f5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=436&q=80",
+  ];
+
+  static List<String> counselorEmails = [
+    'kofimensah@gmail.com',
+    'akomansah@gmail.com',
+    'owusukwame@example.com',
+    'amamensah@example.com',
+    'nanaosei@example.com',
+    'abenaappiah@example.com',
+    'kwesiagyemang@example.com',
+    'adwoaboateng@example.com',
+    'kofiansah@example.com',
+    'afuamensah@example.com',
+    'koboateng@example.com',
+    'yaadjei@example.com',
+    'kwabenadarko@example.com',
+    'akuaasante@example.com',
+    'kwekuaddo@example.com',
+    'efuaamoah@example.com',
+    'kwamemensah@example.com',
+    'abenaofori@example.com',
+    'kofiadu@example.com',
+    'akosuafrimpong@example.com',
+    'nanakwame@example.com',
+    'adwoaboateng@example.com',
+    'kwabenaosei@example.com',
+    'amaasare@example.com',
+    'kofiantwi@example.com',
+    'afiaowusu@example.com',
+    'kojogyasi@example.com',
+    'yaaansah@example.com',
+    'kwesiamponsah@example.com',
+    'akosuaasamoah@example.com',
+  ];
+  static List<String> counselorAddresses = [
+    'Block 5, Office 3, Accra',
+    'Lapas, P.O. Box 234-4567, Accra',
+    'Kumasi, AK-234-4567',
+    'Lapas, P.O. Box 234-4567, Accra',
+    'Sunyani, BA-345-6789',
+    'Tema, TP-789-0123',
+    'Kumasi, AK-234-4567',
+    'Lapas, P.O. Box 234-4567, Accra',
+    'Sunyani, BA-345-6789',
+    'Tema, TP-789-0123',
+    'Kumasi, AK-234-4567',
+    'Lapas, P.O. Box 234-4567, Accra',
+    'Sunyani, BA-345-6789',
+    'Tema, TP-789-0123',
+    'Kumasi, AK-234-4567',
+    'Lapas, P.O. Box 234-4567, Accra',
+    'Sunyani, BA-345-6789',
+    'Tema, TP-789-0123',
+    'Kumasi, AK-234-4567',
+    'Lapas, P.O. Box 234-4567, Accra',
+    'Sunyani, BA-345-6789',
+    'Tema, TP-789-0123',
+    'Kumasi, AK-234-4567',
+    'Lapas, P.O. Box 234-4567, Accra',
+    'Sunyani, BA-345-6789',
+    'Tema, TP-789-0123',
+    'Kumasi, AK-234-4567',
+    'Lapas, P.O. Box 234-4567, Accra',
+    'Sunyani, BA-345-6789',
+    'Tema, TP-789-0123',
+  ];
+  static List<String> counselorRegions = [
+    'Greater Accra Region',
+    'Greater Accra Region',
+    'Ashanti Region',
+    'Greater Accra Region',
+    'Bono Region',
+    'Greater Accra Region',
+    'Ashanti Region',
+    'Greater Accra Region',
+    'Bono Region',
+    'Greater Accra Region',
+    'Ashanti Region',
+    'Greater Accra Region',
+    'Bono Region',
+    'Greater Accra Region',
+    'Ashanti Region',
+    'Greater Accra Region',
+    'Bono Region',
+    'Greater Accra Region',
+    'Ashanti Region',
+    'Greater Accra Region',
+    'Bono Region',
+    'Greater Accra Region',
+    'Ashanti Region',
+    'Greater Accra Region',
+    'Bono Region',
+    'Greater Accra Region',
+    'Ashanti Region',
+    'Greater Accra Region',
+    'Bono Region',
+    'Greater Accra Region',
+  ];
+  static List<String> counselorPhoneNumbers = [
+    '0248235689',
+    '02458965656',
+    '0557823456',
+    '0245678921',
+    '0509876543',
+    '0278765432',
+    '0263456789',
+    '0234567890',
+    '0541234567',
+    '0209876543',
+    '0556789012',
+    '0245678901',
+    '0557823456',
+    '02458965656',
+    '0509876543',
+    '0278765432',
+    '0263456789',
+    '0234567890',
+    '0541234567',
+    '0209876543',
+    '0556789012',
+    '0245678901',
+    '0557823456',
+    '02458965656',
+    '0509876543',
+    '0278765432',
+    '0263456789',
+    '0234567890',
+    '0541234567',
+    '0209876543',
+  ];
+
+  static bool _getRandomBool() {
+    return _random.nextBool();
+  }
+
+  static String _getRandomGender(bool isMan) {
+    return isMan ? 'Male' : 'Female';
+  }
+
+  static String _getRandomReligion() {
+    final religions = ['Christian', 'Muslim', 'Traditional'];
+    return religions[_random.nextInt(religions.length)];
+  }
+
+  static String _getCounsellorType() {
+    return counsellorTypeList[_random.nextInt(counsellorTypeList.length)];
+  }
+
+  static List<UserModel> counsellorList() {
+    List<UserModel> counsellors = [];
+
+    for (int i = 0; i < counselorNames.length; i++) {
+      bool isMan = counselorNames[i].startsWith('Dr') ||
+          counselorNames[i].startsWith('Mr');
+      var city = counselorAddresses[i].split(',');
+      counsellors.add(
+        UserModel(
+          name: counselorNames[i],
+          email: counselorEmails[i],
+          address: counselorAddresses[i],
+          region: counselorRegions[i],
+          password: '',
+          gender: _getRandomGender(isMan),
+          phone: counselorPhoneNumbers[i],
+          religion: _getRandomReligion(),
+          counsellorType: _getCounsellorType(),
+          profile: counselorImages[i],
+          userType: 'Counsellor',
+          isOnline: _getRandomBool(),
+          city: city[0],
+        ),
+      );
+    }
+    return counsellors;
   }
 }

@@ -38,13 +38,12 @@ class FirebaseAuthService {
     return null;
   }
 
-  Future<void> resetPassword(String email) async {
+  static Future<String> resetPassword(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return 'success';
     } on FirebaseAuthException catch (e) {
-      CustomDialog.dismiss();
-      CustomDialog.showError(
-          title: 'Password Reset failed', message: e.message!);
+      return e.message!;
     }
   }
 

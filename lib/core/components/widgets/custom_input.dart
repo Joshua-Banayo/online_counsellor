@@ -25,6 +25,7 @@ class CustomTextFields extends StatelessWidget {
     this.color = Colors.white,
     this.max = 999999,
     this.min = 0,
+    this.focusNode,
   }) : super(key: key);
   final TextEditingController? controller;
   final String? label;
@@ -44,6 +45,7 @@ class CustomTextFields extends StatelessWidget {
   final bool? isReadOnly;
   final Color color;
   final int? max, min;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,7 @@ class CustomTextFields extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText ?? false,
+      focusNode: focusNode,
       onTap: onTap,
       validator: validator,
       inputFormatters: [
