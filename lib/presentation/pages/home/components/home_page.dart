@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/constants/strings.dart';
 import 'package:online_counsellor/core/components/widgets/custom_input.dart';
@@ -11,7 +10,6 @@ import 'package:online_counsellor/presentation/widgets/counsellor_card.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/styles.dart';
 
-import '../../../../generated/assets.dart';
 import '../../../../styles/colors.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -22,9 +20,9 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  FocusNode _focus = FocusNode();
+  final FocusNode _focus = FocusNode();
 
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -48,25 +46,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     var counsellorList = ref.watch(
         filteredCounsellorsProvider(ref.watch(selectedCategoryProvider)));
     var sortedList = sortUsersByRating(counsellorList);
-    return Scaffold(
-      backgroundColor: primaryColor.withOpacity(0.1),
-      appBar: AppBar(
-        title: Row(children: [
-          Image.asset(
-            Assets.logoIcon,
-            height: 50,
-          ),
-          const SizedBox(width: 10),
-          Text(
-            'Online Counsellor',
-            style: GoogleFonts.lobster(
-              fontSize: 30,
-              color: primaryColor,
-            ),
-          ),
-        ]),
-      ),
-      body: SingleChildScrollView(
+    return Container(
+      color: primaryColor.withOpacity(0.1),
+      child: SingleChildScrollView(
           child: Column(children: [
         Padding(
           padding: const EdgeInsets.all(10.0),
@@ -159,7 +141,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
             subtitle: SizedBox(
-              height: 200,
+              height: 215,
               child: sortedList.isNotEmpty
                   ? ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -240,7 +222,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           LayoutBuilder(builder: (context, constraints) {
             var newList = ref.watch(filteredCounsellorsProvider(''));
             return SizedBox(
-              height: 200,
+              height: 215,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,

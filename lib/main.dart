@@ -7,11 +7,9 @@ import 'package:online_counsellor/presentation/pages/home/home_main.dart';
 import 'package:online_counsellor/presentation/pages/authentication/auth_main_page.dart';
 import 'package:online_counsellor/services/firebase_auth.dart';
 import 'package:online_counsellor/services/firebase_fireStore.dart';
-import 'package:online_counsellor/services/other_services.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/colors.dart';
 import 'core/components/widgets/smart_dialog.dart';
-import 'core/functions.dart';
 import 'firebase_options.dart';
 import 'models/user_model.dart';
 
@@ -34,16 +32,9 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future<bool> _initUser() async {
     ref.watch(quotesProvider.notifier).getQuotes();
     ref.watch(counsellorsProvider.notifier).getCounsellors();
-    // //get all uses from firestore and add update their rating with random number
-    // List<Map<String, dynamic>> users = await FireStoreServices.getAllUsersMap();
-    // for (Map<String, dynamic> user in users) {
-    //   await FireStoreServices.updateUserRating(user['id'], getRandomRating());
-    // }
-    //await FirebaseAuthService.signOut();
+
     if (FirebaseAuthService.isUserLogin()) {
       User user = FirebaseAuthService.getCurrentUser();
-
-      //set user isOnline to true in firestore
       await FireStoreServices.updateUserOnlineStatus(user.uid, true);
       UserModel? userModel = await FireStoreServices.getUser(user.uid);
       if (userModel != null) {
@@ -60,6 +51,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     }
   }
   // set user isOnline to false in firestore when app is closed
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

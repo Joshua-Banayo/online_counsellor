@@ -236,10 +236,9 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                     ref.read(userProvider.notifier).setAbout(value!);
                   },
                 ),
-                if (ref.watch(userTypeProvider) != 'Counsellor')
-                  const SizedBox(
-                    height: 20,
-                  ),
+                const SizedBox(
+                  height: 20,
+                ),
                 CustomTextFields(
                   hintText: 'Password',
                   prefixIcon: MdiIcons.lock,

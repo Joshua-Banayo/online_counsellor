@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:online_counsellor/core/components/constants/strings.dart';
 
 class UserModel {
@@ -49,7 +48,7 @@ class UserModel {
     this.religion,
     this.dob,
     this.licenseCert,
-    this.rating,
+    this.rating = 5,
     this.createdAt,
   });
 
@@ -227,6 +226,19 @@ class UserModel {
         licenseCert.hashCode ^
         rating.hashCode ^
         createdAt.hashCode;
+  }
+
+  Map<String, dynamic> updateUserMap() {
+    return <String, dynamic>{
+      'name': name,
+      'profile': profile,
+      'phone': phone,
+      'address': address,
+      'city': city,
+      'region': region,
+      'about': about,
+      'dob': dob,
+    };
   }
 }
 

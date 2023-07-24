@@ -1,12 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 class AppointmentModel {
   String? id;
   String? userId;
+  List<dynamic>? ids;
   String? counsellorId;
-  String? date;
-  String? time;
+  int? date;
+  int? time;
   String? status;
   String? counsellorName;
   String? counsellorImage;
@@ -19,10 +22,11 @@ class AppointmentModel {
   AppointmentModel({
     this.id,
     this.userId,
+    this.ids,
     this.counsellorId,
     this.date,
     this.time,
-    this.status,
+    this.status = 'Pending',
     this.counsellorName,
     this.counsellorImage,
     this.counsellorType,
@@ -36,9 +40,10 @@ class AppointmentModel {
   AppointmentModel copyWith({
     String? id,
     String? userId,
+    List<dynamic>? ids,
     String? counsellorId,
-    String? date,
-    String? time,
+    int? date,
+    int? time,
     String? status,
     String? counsellorName,
     String? counsellorImage,
@@ -52,6 +57,7 @@ class AppointmentModel {
     return AppointmentModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      ids: ids ?? this.ids,
       counsellorId: counsellorId ?? this.counsellorId,
       date: date ?? this.date,
       time: time ?? this.time,
@@ -71,6 +77,7 @@ class AppointmentModel {
     return <String, dynamic>{
       'id': id,
       'userId': userId,
+      'ids': ids,
       'counsellorId': counsellorId,
       'date': date,
       'time': time,
@@ -90,10 +97,13 @@ class AppointmentModel {
     return AppointmentModel(
       id: map['id'] != null ? map['id'] as String : null,
       userId: map['userId'] != null ? map['userId'] as String : null,
+      ids: map['ids'] != null
+          ? List<dynamic>.from((map['ids'] as List<dynamic>))
+          : null,
       counsellorId:
           map['counsellorId'] != null ? map['counsellorId'] as String : null,
-      date: map['date'] != null ? map['date'] as String : null,
-      time: map['time'] != null ? map['time'] as String : null,
+      date: map['date'] != null ? map['date'] as int : null,
+      time: map['time'] != null ? map['time'] as int : null,
       status: map['status'] != null ? map['status'] as String : null,
       counsellorName: map['counsellorName'] != null
           ? map['counsellorName'] as String
@@ -121,7 +131,7 @@ class AppointmentModel {
 
   @override
   String toString() {
-    return 'AppointmentModel(id: $id, userId: $userId, counsellorId: $counsellorId, date: $date, time: $time, status: $status, counsellorName: $counsellorName, counsellorImage: $counsellorImage, counsellorType: $counsellorType, userImage: $userImage, userName: $userName, counsellorState: $counsellorState, userState: $userState, createdAt: $createdAt)';
+    return 'AppointmentModel(id: $id, userId: $userId, ids: $ids, counsellorId: $counsellorId, date: $date, time: $time, status: $status, counsellorName: $counsellorName, counsellorImage: $counsellorImage, counsellorType: $counsellorType, userImage: $userImage, userName: $userName, counsellorState: $counsellorState, userState: $userState, createdAt: $createdAt)';
   }
 
   @override
@@ -130,6 +140,7 @@ class AppointmentModel {
 
     return other.id == id &&
         other.userId == userId &&
+        listEquals(other.ids, ids) &&
         other.counsellorId == counsellorId &&
         other.date == date &&
         other.time == time &&
@@ -148,6 +159,7 @@ class AppointmentModel {
   int get hashCode {
     return id.hashCode ^
         userId.hashCode ^
+        ids.hashCode ^
         counsellorId.hashCode ^
         date.hashCode ^
         time.hashCode ^
@@ -160,5 +172,13 @@ class AppointmentModel {
         counsellorState.hashCode ^
         userState.hashCode ^
         createdAt.hashCode;
+  }
+
+  Map<String, dynamic> rescheduleMap() {
+    return <String, dynamic>{
+      'date': date,
+      'time': time,
+      'status': 'Pending',
+    };
   }
 }

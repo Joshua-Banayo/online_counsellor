@@ -5,6 +5,7 @@ class QuestionsModel {
   String? id;
   String? question;
   String? description;
+  String? category;
   String? postById;
   String? postByName;
   String? postByType;
@@ -15,11 +16,12 @@ class QuestionsModel {
     this.id,
     this.question,
     this.description,
+    this.category,
     this.postById,
     this.postByName,
     this.postByType,
     this.postedByImage,
-    this.isAnonymous,
+    this.isAnonymous = false,
     this.createdAt,
   });
 
@@ -27,6 +29,7 @@ class QuestionsModel {
     String? id,
     String? question,
     String? description,
+    String? category,
     String? postById,
     String? postByName,
     String? postByType,
@@ -38,6 +41,7 @@ class QuestionsModel {
       id: id ?? this.id,
       question: question ?? this.question,
       description: description ?? this.description,
+      category: category ?? this.category,
       postById: postById ?? this.postById,
       postByName: postByName ?? this.postByName,
       postByType: postByType ?? this.postByType,
@@ -52,6 +56,7 @@ class QuestionsModel {
       'id': id,
       'question': question,
       'description': description,
+      'category': category,
       'postById': postById,
       'postByName': postByName,
       'postByType': postByType,
@@ -67,6 +72,7 @@ class QuestionsModel {
       question: map['question'] != null ? map['question'] as String : null,
       description:
           map['description'] != null ? map['description'] as String : null,
+      category: map['category'] != null ? map['category'] as String : null,
       postById: map['postById'] != null ? map['postById'] as String : null,
       postByName:
           map['postByName'] != null ? map['postByName'] as String : null,
@@ -87,7 +93,7 @@ class QuestionsModel {
 
   @override
   String toString() {
-    return 'QuestionsModel(id: $id, question: $question, description: $description, postById: $postById, postByName: $postByName, postByType: $postByType, postedByImage: $postedByImage, isAnonymous: $isAnonymous, createdAt: $createdAt)';
+    return 'QuestionsModel(id: $id, question: $question, description: $description, category: $category, postById: $postById, postByName: $postByName, postByType: $postByType, postedByImage: $postedByImage, isAnonymous: $isAnonymous, createdAt: $createdAt)';
   }
 
   @override
@@ -97,6 +103,7 @@ class QuestionsModel {
     return other.id == id &&
         other.question == question &&
         other.description == description &&
+        other.category == category &&
         other.postById == postById &&
         other.postByName == postByName &&
         other.postByType == postByType &&
@@ -110,11 +117,21 @@ class QuestionsModel {
     return id.hashCode ^
         question.hashCode ^
         description.hashCode ^
+        category.hashCode ^
         postById.hashCode ^
         postByName.hashCode ^
         postByType.hashCode ^
         postedByImage.hashCode ^
         isAnonymous.hashCode ^
         createdAt.hashCode;
+  }
+
+  Map<Object, Object?> updateMap() {
+    return <String, dynamic>{
+      'question': question,
+      'description': description,
+      'category': category,
+      'isAnonymous': isAnonymous,
+    };
   }
 }

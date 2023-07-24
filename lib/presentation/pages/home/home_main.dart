@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:online_counsellor/presentation/pages/home/components/appointment_page.dart';
-import 'package:online_counsellor/presentation/pages/home/components/community_page.dart';
+import 'package:online_counsellor/core/functions.dart';
+import 'package:online_counsellor/presentation/pages/home/components/appointment/appointment_page.dart';
+import 'package:online_counsellor/presentation/pages/home/components/community/community_page.dart';
 import 'package:online_counsellor/presentation/pages/home/components/home_page.dart';
-import 'package:online_counsellor/presentation/pages/home/components/prohfile_page.dart';
-import 'package:online_counsellor/presentation/pages/home/components/session_page.dart';
+import 'package:online_counsellor/presentation/pages/home/components/session/session_page.dart';
 import 'package:online_counsellor/services/firebase_fireStore.dart';
+import 'package:online_counsellor/state/navigation_state.dart';
 import 'package:online_counsellor/styles/styles.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import '../../../generated/assets.dart';
+import '../../../services/firebase_auth.dart';
 import '../../../state/data_state.dart';
 import '../../../styles/colors.dart';
+import '../authentication/auth_main_page.dart';
+import '../profile/profile_page.dart';
 
 class HomeMainPage extends ConsumerStatefulWidget {
   const HomeMainPage({super.key});
@@ -22,48 +28,11 @@ class HomeMainPage extends ConsumerStatefulWidget {
 class _HomeMainState extends ConsumerState<HomeMainPage> {
   List<Widget> _buildScreens(bool isCounsellor) {
     return [
-      //if (!isCounsellor)
-      const HomePage(),
+      if (!isCounsellor) const HomePage(),
       const CommunityPage(),
       const SessionPage(),
       const AppointmentPage(),
-      const ProfilePage()
-    ];
-  }
-
-  List<PersistentBottomNavBarItem> _navBarsItems(bool isCounsellor) {
-    return [
-      //if (!isCounsellor)
-      PersistentBottomNavBarItem(
-        icon: Icon(MdiIcons.home),
-        title: ("Home"),
-        activeColorPrimary: primaryColor,
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(MdiIcons.accountGroup),
-        title: ("Community"),
-        activeColorPrimary: primaryColor,
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(MdiIcons.calendarClock),
-        title: ("Sessions"),
-        activeColorPrimary: primaryColor,
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(MdiIcons.calendar),
-        title: ("Appointments"),
-        activeColorPrimary: primaryColor,
-        inactiveColorPrimary: Colors.grey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(MdiIcons.account),
-        title: ("Profile"),
-        activeColorPrimary: primaryColor,
-        inactiveColorPrimary: Colors.grey,
-      ),
+      //const ProfilePage()
     ];
   }
 
@@ -72,41 +41,98 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
     var userTypes = ref.watch(userProvider).userType;
     return WillPopScope(
         onWillPop: () => warnUserBeforeCloseApp(),
-        child: SafeArea(
-          child: PersistentTabView(
-            context,
-
-            screens: _buildScreens(userTypes == 'Counsellor'),
-            items: _navBarsItems(userTypes == 'Counsellor'),
-            confineInSafeArea: true,
-            backgroundColor: Colors.white, // Default is Colors.white.
-            handleAndroidBackButtonPress: true, // Default is true.
-            resizeToAvoidBottomInset:
-                true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-            stateManagement: true, // Default is true.
-            hideNavigationBarWhenKeyboardShows:
-                true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
-            decoration: NavBarDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              colorBehindNavBar: Colors.white,
+        child: Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              title: Row(children: [
+                Image.asset(
+                  Assets.logoIcon,
+                  height: 45,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'Online Counsellor',
+                  style: GoogleFonts.lobster(
+                    fontSize: 26,
+                    color: primaryColor,
+                  ),
+                ),
+              ]),
+              actions: [
+                PopupMenuButton(
+                    child: CircleAvatar(
+                      radius: 15,
+                      backgroundColor: primaryColor.withOpacity(.5),
+                      backgroundImage: ref.watch(userProvider).profile != null
+                          ? NetworkImage(ref.watch(userProvider).profile!)
+                          : null,
+                    ),
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                            child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.account_circle),
+                          title: const Text('Profile'),
+                          onTap: () {
+                            sendToPage(context, const ProfilePage());
+                          },
+                        )),
+                        PopupMenuItem(
+                            child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.logout),
+                          title: const Text('Logout'),
+                          onTap: () async {
+                            //set user isOnline to false in firestore
+                            var userId = ref.read(userProvider).id;
+                            await FireStoreServices.updateUserOnlineStatus(
+                                userId!, false);
+                            await FirebaseAuthService.signOut();
+                            if (mounted) {
+                              noReturnSendToPage(context, const AuthMainPage());
+                            }
+                          },
+                        ))
+                      ];
+                    }),
+                const SizedBox(width: 10)
+              ],
             ),
-            popAllScreensOnTapOfSelectedTab: true,
-            popActionScreens: PopActionScreensType.all,
-            itemAnimationProperties: const ItemAnimationProperties(
-              // Navigation Bar's items animation properties.
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
+            bottomNavigationBar: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: GNav(
+                  onTabChange: (index) {
+                    ref.read(bottomNavIndexProvider.notifier).state = index;
+                  },
+                  tabActiveBorder: Border.all(
+                      color: Colors.black, width: 1), // tab button border
+                  padding: const EdgeInsets.all(8),
+                  gap: 8,
+                  activeColor: primaryColor,
+                  tabs: [
+                    if (userTypes != 'Counsellor')
+                      GButton(
+                        icon: MdiIcons.home,
+                        text: 'Home',
+                      ),
+                    GButton(
+                      icon: MdiIcons.accountGroup,
+                      text: 'Community',
+                    ),
+                    GButton(
+                      icon: MdiIcons.calendarClock,
+                      text: 'Sessions',
+                    ),
+                    GButton(
+                      icon: MdiIcons.calendar,
+                      text: 'Appointments',
+                    ),
+                  ]),
             ),
-            screenTransitionAnimation: const ScreenTransitionAnimation(
-              // Screen transition animation on change of selected tab.
-              animateTabTransition: true,
-              curve: Curves.ease,
-              duration: Duration(milliseconds: 200),
-            ),
-            navBarStyle: NavBarStyle
-                .style1, // Choose the nav bar style with this property.
-          ),
-        ));
+            body: getWidgets(_buildScreens(userTypes == 'Counsellor'),
+                ref.watch(bottomNavIndexProvider))));
   }
 
   Future<bool> warnUserBeforeCloseApp() async {
@@ -149,5 +175,22 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
     var userId = ref.read(userProvider).id;
     await FireStoreServices.updateUserOnlineStatus(userId!, false)
         .then((value) => Navigator.of(context).pop(true));
+  }
+
+  Widget getWidgets(List<Widget> buildScreens, int watch) {
+    switch (watch) {
+      case 0:
+        return buildScreens[0];
+      case 1:
+        return buildScreens[1];
+      case 2:
+        return buildScreens[2];
+      case 3:
+        return buildScreens[3];
+      case 4:
+        return buildScreens[4];
+      default:
+        return buildScreens[0];
+    }
   }
 }

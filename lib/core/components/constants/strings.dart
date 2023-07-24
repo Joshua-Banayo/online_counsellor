@@ -81,3 +81,16 @@ const counsellorTypeWithIcon = [
   {"name": 'Guidance Counsellor', "icon": Assets.imagesGuidance},
   {"name": 'Child Counsellor', "icon": Assets.imagesChild},
 ];
+
+const counsellingTopicCategory = [
+  'Marriage',
+  'Relationship',
+  'Family',
+  'Career',
+  'Addiction',
+  'Mental Health',
+  'Grief',
+  'Rehabilitation',
+  'Guidance',
+  'Child',
+];

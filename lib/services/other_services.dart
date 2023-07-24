@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:online_counsellor/models/quotes_model.dart';
 
@@ -14,14 +12,13 @@ class OtherServices {
   };
 
   static Future<QuotesModel?> getQuotes(String category) async {
-    // final response =
-    //     await http.get(Uri.parse('$baseUrl$category'), headers: headers);
-    // if (response.statusCode == 200) {
-    //   var data = json.decode(response.body);
-    //   return QuotesModel.fromMap(data[0]);
-    // } else {
-    //   return null;
-    // }
-    return null;
+    final response =
+        await http.get(Uri.parse('$baseUrl$category'), headers: headers);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return QuotesModel.fromMap(data[0]);
+    } else {
+      return null;
+    }
   }
 }

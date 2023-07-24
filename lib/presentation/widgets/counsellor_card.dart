@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/models/user_model.dart';
 import 'package:online_counsellor/styles/colors.dart';
-
 import '../../state/data_state.dart';
 import 'counsellor_open_page.dart';
 
@@ -14,6 +13,7 @@ class CounsellorCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var size = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: () {
         ref.read(selectedCounsellorProvider.notifier).state = user;
@@ -22,7 +22,7 @@ class CounsellorCard extends ConsumerWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
         padding: const EdgeInsets.all(10),
-        width: size.width * 0.8,
+        width: size.width * 0.95,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
@@ -56,6 +56,8 @@ class CounsellorCard extends ConsumerWidget {
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 2),
                 Text(user.name ?? "Name",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
@@ -73,6 +75,8 @@ class CounsellorCard extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                     '${user.address ?? "Address"}, ${user.city ?? "City"}, ${user.region ?? "Region"}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style:
                         const TextStyle(color: Colors.black45, fontSize: 14)),
                 const SizedBox(height: 10),

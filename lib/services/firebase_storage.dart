@@ -31,4 +31,14 @@ class CloudStorageServices {
     final String url = await taskSnapshot.ref.getDownloadURL();
     return url;
   }
+
+  static Future<String> sendFile(File file, String id) async {
+    final Reference storageReference = _firebaseStorage
+        .ref()
+        .child('files/$id${DateTime.now().microsecondsSinceEpoch}');
+    final UploadTask uploadTask = storageReference.putFile(file);
+    final TaskSnapshot taskSnapshot = await uploadTask;
+    final String url = await taskSnapshot.ref.getDownloadURL();
+    return url;
+  }
 }
